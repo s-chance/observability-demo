@@ -1,0 +1,37 @@
+services:
+  oap:
+    image: apache/skywalking-oap-server:10.0.0
+    container_name: sw_oap
+    networks:
+      - sw_net
+    ports:
+      - "11800:11800"
+      - "12800:12800"
+    volumes:
+      - ./config/application.yml:/skywalking/config/application.yml
+    environment:
+      SW_HEALTH_CHECKER: default
+      JAVA_OPTS: "-Xms384m -Xmx384m"
+  # banyandb:
+  #   image: apache/skywalking-banyandb:0.7.0-rc0-slim
+  #   container_name: sw_db
+  #   networks:
+  #     - sw_net
+  #   expose:
+  #     - 17912
+  #   ports:
+  #     - 17913:17913
+  #   command: standalone --stream-root-path /tmp/stream-data --measure-root-path /tmp/measure-data
+  # ui:
+  #   image: apache/skywalking-ui:10.0.0
+  #   container_name: sw_ui
+  #   networks:
+  #     - sw_net
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SW_OAP_ADDRESS: http://oap:12800
+
+networks:
+  sw_net:
+    name: sw_net
