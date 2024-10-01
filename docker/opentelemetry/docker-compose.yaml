@@ -1,0 +1,26 @@
+services:
+  jaeger-all-one:
+    image: jaegertracing/all-in-one:latest
+    profiles:
+      - jaeger
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - "COLLECTOR_OTLP_ENABLED=true"
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    profiles:
+      - collector
+    container_name: otel-collector
+    ports:
+      - "1888:1888" # pprof扩展
+      - "8888:8888" # Collector公开的Prometheus指标
+      - "8889:8889" # Prometheus导出器指标
+      - "13133:13133" # health_check扩展
+      - "4317:4317" # OTLP gRPC接收器
+      - "4318:4318" # OTLP http接收器
+      - "55679:55679" # zpages扩展
