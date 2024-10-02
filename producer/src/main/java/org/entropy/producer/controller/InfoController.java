@@ -27,4 +27,10 @@ public class InfoController {
         log.info("producer local");
         return "local!";
     }
+
+    @GetMapping("/okhttp")
+    public String okhttp() {
+        log.info("producer okhttp");
+        return "okhttp!";
+    }
 }
