@@ -10,6 +10,7 @@
         <module name="producer" />
         <module name="consumer" />
         <module name="feign-api" />
+        <module name="gateway" />
       </profile>
     </annotationProcessing>
   </component>
@@ -17,6 +18,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="consumer" options="-parameters" />
       <module name="feign-api" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="producer" options="-parameters" />
       <module name="test-feign" options="" />
     </option>

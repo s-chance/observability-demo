@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: consumer
+          uri: http://localhost:6999
+          predicates:
+            - Path=/consumer/**
+          filters:
+            - StripPrefix=1
+        - id: producer
+          uri: http://localhost:7000
+          predicates:
+            - Path=/producer/**
+          filters:
+            - StripPrefix=1
