@@ -8,6 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="producer" />
+        <module name="common" />
+        <module name="short-chain" />
         <module name="consumer" />
         <module name="feign-api" />
         <module name="gateway" />
@@ -16,10 +18,12 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="common" options="-parameters" />
       <module name="consumer" options="-parameters" />
       <module name="feign-api" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="producer" options="-parameters" />
+      <module name="short-chain" options="-parameters" />
       <module name="test-feign" options="" />
     </option>
   </component>
