@@ -18,11 +18,11 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="common" options="-parameters" />
-      <module name="consumer" options="-parameters" />
-      <module name="feign-api" options="-parameters" />
+      <module name="common" options="" />
+      <module name="consumer" options="" />
+      <module name="feign-api" options="" />
       <module name="gateway" options="-parameters" />
-      <module name="producer" options="-parameters" />
+      <module name="producer" options="" />
       <module name="short-chain" options="-parameters" />
       <module name="test-feign" options="" />
     </option>
