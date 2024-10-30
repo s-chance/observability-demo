@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.entropy.feignapi.api.InfoClient;
+import org.entropy.feignapi.api.InfoExchangeClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,15 +17,18 @@ public class GetInfoController {
 
 
     private final InfoClient infoClient;
+    private final InfoExchangeClient infoExchangeClient;
 
-    public GetInfoController(InfoClient infoClient) {
+    public GetInfoController(InfoClient infoClient, InfoExchangeClient infoExchangeClient) {
         this.infoClient = infoClient;
+        this.infoExchangeClient = infoExchangeClient;
     }
 
     @GetMapping("/test")
     public String test() {
         log.info("consumer test");
-        return infoClient.info();
+        return infoExchangeClient.info();
+//        return infoClient.info();
     }
 
     @GetMapping("/test/list")
