@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    consul:
+      discovery:
+        register: true
+        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+        prefer-ip-address: true

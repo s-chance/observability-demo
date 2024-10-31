@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    consul:
+      enabled: true
+      host: localhost
+      port: 8500
+      config:
+        prefixes:
+          - config
+        default-context: application
+        profile-separator: "-"
+        data-key: data.yaml
+        enabled: true
+        format: yaml
