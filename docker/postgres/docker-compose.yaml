@@ -1,0 +1,15 @@
+services:
+  db:
+    container_name: short-chain
+    image: postgres:17
+    shm_size: 128mb
+    volumes:
+      - short_chain_db:/var/lib/postgresql/data.yaml
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: 12345
+
+volumes:
+  short_chain_db:
