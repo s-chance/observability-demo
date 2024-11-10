@@ -38,7 +38,7 @@ public class TokenBucketRateLimiterTest {
     }
 
     @Test
-    public void testTokenBucketRateLimiter() throws InterruptedException {
+    public void testTokenBucketRateLimiterByThread() throws InterruptedException {
         final int maxPermits = 10;
         final long permitsPerSecond = 5;
         final TokenBucketRateLimiter limiter = new TokenBucketRateLimiter(maxPermits, permitsPerSecond);
@@ -71,5 +71,27 @@ public class TokenBucketRateLimiterTest {
         assertTrue(successfulRequests.get() >= maxPermits);
         // 验证是否不超过numberOfThreads个请求被允许
         assertTrue(successfulRequests.get() <= numberOfThreads);
+    }
+
+    @Test
+    public void testTokenBucketRateLimiterByLoop() throws InterruptedException {
+        final int maxPermits = 10;
+        final long permitsPerSecond = 5;
+        final TokenBucketRateLimiter limiter = new TokenBucketRateLimiter(maxPermits, permitsPerSecond);
+        final int numberOfThreads = 20;
+        final AtomicInteger successfulRequests = new AtomicInteger(0);
+
+        // 模拟匀速请求
+        for (int i = 0; i < numberOfThreads; i++) {
+            TimeUnit.MILLISECONDS.sleep(100);
+            if (limiter.tryAcquire()) {
+                successfulRequests.incrementAndGet(); // 记录成功的请求
+                System.out.println("Request successful, " + System.nanoTime());
+            } else {
+                System.out.println("Request limited, " + System.nanoTime());
+            }
+        }
+
+        System.out.println("Successful requests: " + successfulRequests.get());
     }
 }
