@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,7 +38,7 @@ public class RateLimitTests {
     }
 
     @Test
-    public void FixedWindowRateLimitTest() throws InterruptedException {
+    public void FixedWindowRateLimitTestByThread() throws InterruptedException {
         final int maxPermits = 10;
         final long windowSizeMillis = 1000; // 1 seconds window
         final FixedWindowRateLimiter limiter = new FixedWindowRateLimiter(maxPermits, windowSizeMillis);
@@ -70,5 +71,27 @@ public class RateLimitTests {
         assertTrue(successfulRequests.get() >= maxPermits);
         // 验证是否不超过numberOfThreads个请求被允许
         assertTrue(successfulRequests.get() <= numberOfThreads);
+    }
+
+    @Test
+    public void FixedWindowRateLimitTestByLoop() throws InterruptedException {
+        final int maxPermits = 10;
+        final long windowSizeMillis = 1000; // 1 seconds window
+        final FixedWindowRateLimiter limiter = new FixedWindowRateLimiter(maxPermits, windowSizeMillis);
+        final int numberOfThreads = 11;
+        final AtomicInteger successfulRequests = new AtomicInteger(0);
+
+        // 模拟匀速请求
+        for (int i = 0; i < numberOfThreads; i++) {
+            TimeUnit.MILLISECONDS.sleep(100);
+            if (limiter.tryAcquire()) {
+                successfulRequests.incrementAndGet(); // 记录成功的请求
+                System.out.println("Request successful, " + LocalDateTime.now()); // 请求成功提示
+            } else {
+                System.out.println("Request limited," + LocalDateTime.now()); // 请求被限制提示
+            }
+        }
+
+        System.out.println(successfulRequests.get());
     }
 }

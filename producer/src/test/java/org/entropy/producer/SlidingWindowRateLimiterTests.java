@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +42,7 @@ public class SlidingWindowRateLimiterTests {
     }
 
     @Test
-    public void testSlidingWindowRateLimiter() throws InterruptedException {
+    public void testSlidingWindowRateLimiterByThread() throws InterruptedException {
         final int maxPermits = 10;
         final long windowSizeMillis = 1000; // 1 seconds window
         final SlidingWindowRateLimiter limiter = new SlidingWindowRateLimiter(maxPermits, windowSizeMillis);
@@ -74,5 +75,27 @@ public class SlidingWindowRateLimiterTests {
         assertTrue(successfulRequests.get() >= maxPermits);
         // 验证是否不超过numberOfThreads个请求被允许
         assertTrue(successfulRequests.get() <= numberOfThreads);
+    }
+
+    @Test
+    public void testSlidingWindowRateLimiterByLoop() throws InterruptedException {
+        final int maxPermits = 10;
+        final long windowSizeMillis = 1000; // 1 seconds window
+        final SlidingWindowRateLimiter limiter = new SlidingWindowRateLimiter(maxPermits, windowSizeMillis);
+        final int numberOfThreads = 11;
+        final AtomicInteger successfulRequests = new AtomicInteger(0);
+
+        // 模拟匀速请求
+        for (int i = 0; i < numberOfThreads; i++) {
+            TimeUnit.MILLISECONDS.sleep(50);
+            if (limiter.tryAcquire().get()) {
+                successfulRequests.incrementAndGet(); // 记录成功的请求
+                System.out.println("Request successful, " + System.currentTimeMillis());
+            } else {
+                System.out.println("Request limited, " + System.currentTimeMillis());
+            }
+        }
+
+        System.out.println("Successful requests: " + successfulRequests.get());
     }
 }
