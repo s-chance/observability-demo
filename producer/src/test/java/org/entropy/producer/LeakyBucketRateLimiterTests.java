@@ -14,6 +14,7 @@ public class LeakyBucketRateLimiterTests {
     public static class LeakyBucketRateLimiter {
         private final long leakRate; // 漏水速率（单位时间内的请求数）
         private final long capacity; // 桶的容量
+        private final long leakInterval; // 两个连续请求之间的时间间隔（纳秒）
         private final ReentrantLock lock = new ReentrantLock();
         private final AtomicLong lastLeakTimestamp = new AtomicLong(System.nanoTime());
         private long availableCapacity; // 可用容量
@@ -21,10 +22,11 @@ public class LeakyBucketRateLimiterTests {
         public LeakyBucketRateLimiter(long leakRate, long capacity) {
             this.leakRate = leakRate;
             this.capacity = capacity;
-            this.availableCapacity = capacity; // 初始时桶满
+            this.leakInterval = TimeUnit.SECONDS.toNanos(1) / leakRate; // 计算两个连续请求之间的时间间隔
+            this.availableCapacity = capacity; // 初始时桶可用容量满
         }
 
-        public boolean tryAcquire() {
+        public boolean tryAcquire() throws InterruptedException {
             long now = System.nanoTime();
             lock.lock();
             try {
@@ -34,9 +36,15 @@ public class LeakyBucketRateLimiterTests {
                 long capacityToAdd = (elapsed * leakRate) / TimeUnit.SECONDS.toNanos(1);
                 availableCapacity = Math.min(capacity, availableCapacity + capacityToAdd);
 
+                // 如果桶的容量足够，处理请求
                 if (availableCapacity >= 1) {
                     availableCapacity--;
                     lastLeakTimestamp.set(now);
+
+                    // 等待到下一个请求应该被处理的时间
+                    if (elapsed < leakInterval) {
+                        TimeUnit.NANOSECONDS.sleep(leakInterval - elapsed); // 等待剩余的时间
+                    }
                     return true;
                 } else {
                     return false;
