@@ -17,22 +17,38 @@ public class TokenBucketRateLimiterTest {
         private final AtomicLong availableTokens; // 当前可用的令牌数
         private final AtomicLong lastRefillTimestamp; // 上次填充令牌的时间戳（纳秒）
 
+        private final Thread refillThread; // 令牌填充的定时任务线程
+
         public TokenBucketRateLimiter(long maxTokens, long refillRate) {
             this.maxTokens = maxTokens;
             this.refillRate = refillRate;
             this.refillInterval = TimeUnit.SECONDS.toNanos(1) / refillRate;
             this.availableTokens = new AtomicLong(maxTokens);
             this.lastRefillTimestamp = new AtomicLong(System.nanoTime());
+
+            // 启动定时任务周期性地添加令牌
+            this.refillThread = new Thread(() -> {
+                while (true) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(10); // 检查间隔，可以根据需要调整
+                        long now = System.nanoTime();
+                        long tokensToAdd = (now - lastRefillTimestamp.get()) / refillInterval;
+                        if (tokensToAdd > 0) {
+                            long newTokens = Math.min(maxTokens, availableTokens.get() + tokensToAdd);
+                            availableTokens.set(newTokens);
+                            lastRefillTimestamp.set(now);
+                        }
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            });
+            this.refillThread.setDaemon(true); // 设置为守护线程，以便在主程序结束时自动结束
+            this.refillThread.start();
         }
 
         public boolean tryAcquire() {
-            long now = System.nanoTime();
-            long tokensToAdd = (now - lastRefillTimestamp.get()) / refillInterval;
-            if (tokensToAdd > 0) {
-                long newTokens = Math.min(maxTokens, availableTokens.get() + tokensToAdd);
-                availableTokens.set(newTokens);
-                lastRefillTimestamp.set(now);
-            }
             return availableTokens.getAndDecrement() > 0;
         }
     }
