@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.entropy.consumer.annotation.RateLimit;
+import org.entropy.consumer.enums.RateLimitStrategyType;
 import org.entropy.feignapi.api.InfoClient;
 import org.entropy.feignapi.api.InfoExchangeClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,7 @@ public class GetInfoController {
     }
 
     @GetMapping("/test/local")
+    @RateLimit(strategy = RateLimitStrategyType.SLIDING_LOG)
     public String testLocal() {
         log.info("consumer local");
         return "local";
