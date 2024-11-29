@@ -1,0 +1,3 @@
+[submodule "short-chain"]
+	path = short-chain
+	url = git@github.com:s-chance/short-chain.git
