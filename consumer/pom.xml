@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.entropy</groupId>
         <artifactId>test-feign</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>consumer</artifactId>
 
@@ -13,7 +13,7 @@
         <dependency>
             <groupId>org.entropy</groupId>
             <artifactId>feign-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
