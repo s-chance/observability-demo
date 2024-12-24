@@ -5,8 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
-@Configuration(proxyBeanMethods = false)
-@EnableWebSocket
+@Deprecated
+//@Configuration(proxyBeanMethods = false)
+//@EnableWebSocket
 public class WsConfig {
 
     @Bean

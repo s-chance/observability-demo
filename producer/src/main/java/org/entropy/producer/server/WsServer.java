@@ -6,8 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component
-@ServerEndpoint("/ws")
+@Deprecated
+//@Component
+//@ServerEndpoint("/ws")
 public class WsServer {
     // 当新的WebSocket连接建立时调用
     @OnOpen
